@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contador de Dias</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+  <script src="	https://cdnjs.cloudflare.com/ajax/libs/moment-business-days/1.2.0/index.js"></script>
+</head>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Overpass:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+  * {
+    margin: 0;
+    padding: 0;
+    border: none;
+    outline: none;
+    font-family: 'Roboto',Arial;
+  }
+
+  body {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #a1a1a1;
+  }
+
+  .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    background: rgb(22, 22, 22,.6);
+    border-radius: 30px;
+    padding: 10px;
+    min-height: 45vh;
+    min-width: 20vw;
+    color: #f1f1f1;
+  }
+
+  .header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  h1 {
+    font-size: 3vh;
+  }
+
+  p {
+    font-size: 2vh;
+  }
+
+  .inputs {
+    display: flex;
+    gap: 10px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  label {
+    display: flex;
+    gap: 5px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(22, 22, 22,.3);
+    border-radius: 10px;
+    padding: 10px;
+  }
+
+  input {
+    font-size: 1.4vh;
+    height: 3.5vh;
+    border-radius: 10px;
+    padding: 1px;
+    text-align: center;
+    border-bottom: 1px solid #e5e5e5;
+  }
+
+  #calcular {
+    background-color: #01c6a0;
+    width: 100%;
+    height: 3vh;
+    font-size: 2vh;
+    font-weight: 600;
+    color: #f1f1f1;
+    cursor: pointer;
+    border-radius: 10px;
+  }
+
+  .results {
+    font-size: 2vh;
+    font-weight: 500;
+  }
+
+  .results span {
+    color: linear-gradient(90deg, #2812ff, #0a26d0);
+  }
+</style>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>CONTADOR DE DIAS</h1>
+      <p>Saiba quantos dias letivos ainda terão.</p>
+    </div>
+
+    <div class="inputs">
+      <label>
+        Quantos sábados letivos terão no ano?
+        <input type="number" id="sabados" min="0" value="0">
+      </label>
+      <label>
+        Quando acaba o ano? (Selecione a data)
+        <input type="date" id="dataFinal">
+      </label>
+      <button id="calcular" onclick="contarDiasLetivos()">Calcular</button>
+    </div>
+
+    <div class="results">
+      <div class="result" id="resultado"></div>
+    </div>
+  </div>
+  <script>
+    moment.updateLocale('en', {
+      workingWeekdays: [1, 2, 3, 4, 5]
+    });
+
+    function contarDiasLetivos() {
+      const sabados = parseInt(document.getElementById("sabados").value) || 0;
+      if (sabados < 0) {
+        document.getElementById("resultado").innerText = "Insira uma quantidade de sábados válida.";
+        return;
+      }
+
+      const dataFinalValue = document.getElementById("dataFinal").value;
+      if (!dataFinalValue) {
+        document.getElementById("resultado").innerText = "Insira uma data final.";
+        return;
+      }
+
+      const dataFinal = moment(dataFinalValue, "YYYY-MM-DD").startOf("day");
+      const dataInicial = moment().startOf("day");
+
+      if (dataFinal.isBefore(dataInicial)) {
+        document.getElementById("resultado").innerText = "Suas aulas já acabaram.";
+        return;
+      }
+
+      let diasUteis = dataInicial.businessDiff(dataFinal);
+
+      document.getElementById("resultado").innerHTML = `FALTAM <span>${diasUteis + sabados}</span> DIAS PARA ACABAR O ANO!`;
+    }
+  </script>
+</body>
+</html>
